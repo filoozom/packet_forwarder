@@ -35,7 +35,7 @@ Maintainer: Michael Coracin
 #include <time.h>           /* time, clock_gettime, strftime, gmtime */
 #include <sys/time.h>       /* timeval */
 #include <unistd.h>         /* getopt, access */
-#include <stdlib.h>         /* atoi, exit */
+#include <stdlib.h>         /* atoi, exit, getenv */
 #include <errno.h>          /* error messages */
 #include <math.h>           /* modf */
 #include <assert.h>
@@ -691,7 +691,10 @@ static int parse_gateway_configuration(const char * conf_file) {
     }
 
     /* server hostname or IP address (optional) */
-    str = json_object_get_string(conf_obj, "server_address");
+    str = getenv("SERVER_ADDRESS");
+    if (str == NULL) {
+        str = json_object_get_string(conf_obj, "server_address");
+    }
     if (str != NULL) {
         strncpy(serv_addr, str, sizeof serv_addr);
         MSG("INFO: server hostname or IP address is configured to \"%s\"\n", serv_addr);
